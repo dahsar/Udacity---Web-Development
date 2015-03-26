@@ -4,7 +4,7 @@ import webapp2
 
 
 form = """
-<b> <h1> Wattup bitch...enter some text to do some fancy cryptography type shit. </b> </h1>
+<b> <h1> Wattup yo....enter some text to do some fancy cryptography type stuff. </b> </h1>
 <form method = "POST">
 	<textarea name = "text">%(happy)s</textarea>
 	<input type = "submit">
