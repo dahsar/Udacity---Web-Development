@@ -9,3 +9,6 @@ handlers:
 - url: /.*
   script: rot13.application
 
+libraries:
+- name: jinja2
+  version: latest 

@@ -1,0 +1,21 @@
+
+<!DOCTYPE html>
+
+<html>
+    <head>
+        <title>BLAWG!!!</title>
+    </head>
+    <body>
+        <h1>BLAWG!!!</h1>
+
+	{% for x in posts %}
+		<div class = "post">
+			<div class = "post-title">{{x.subject}}</div>
+			<div class = "post-body">{{x.content}}</div>
+		</div>
+		<br>
+		<br>
+	{% endfor %}
+    </body>
+</html>
+		

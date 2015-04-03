@@ -2,11 +2,21 @@ import cgi
 import string
 import webapp2
 import re
+
+import os
+import jinja2
+
+template_dir = os.path.join(os.path.dirname(__file__),'templates')
+jinja_env = jinja2.Environment(loader = jinja2.FileSystemLoader(template_dir), autoescape = True)
+
+
+
+
 form2 = """
 <b> <h1> Wattup yo....ok this time im having yall sign up to this wack website </b> </h1>
 <form method = "POST">
 <label>
-Username:	<input type = "text" name = "username"> <b style = "color : red"> %(usererr)s </b>
+Username:	<input type = "text" name = "username" value = "%(up)s">  <b style = "color : red"> %(usererr)s </b>
 </label> 
 <br>
 <label> Password:
@@ -18,7 +28,7 @@ Verify password: <input type = "password" name = "verify"> <b style = "color : r
 </label>
 <br>
 <label> Email (Optional): 
-<input type = "text" name = "email"> <b style = "color : red"> %(mailerr)s </b>
+<input type = "text" name = "email" value = "%(ep)s"> <b style = "color : red"> %(mailerr)s </b>
 </label>
 <br>
 <input type = "submit">
@@ -61,7 +71,21 @@ def validmatch(text1,text2):
 		return True
 	else:
 		return False
-class MainPage(webapp2.RequestHandler):
+
+class Handler(webapp2.RequestHandler):
+	def write(self, *a, **kw):
+		self.response.out.write(*a,**kw)
+
+	def render_str(self,template,**params):
+		t = jinja_env.get_template(template)
+		return t.render(params)
+
+	def render(self, template, **kw):
+		self.write(self.render_str(template,**kw))
+
+
+
+class MainPage(Handler):
 	user = False
 	passs = False
 	match = False
@@ -75,13 +99,13 @@ class MainPage(webapp2.RequestHandler):
 	verstuff = ""
 	emstuff = ""
 
-	def write_form(self, uerr = "", perr = "", eerr = "", matcho = ""):
-		self.response.out.write(form2 % { "usererr" : uerr, "passerr" : perr, "mailerr" : eerr, "matchoo" : matcho})
-
+	def write_form(self, uerr = "", perr = "", eerr = "", matcho = "", u = "", p = ""):
+		#self.response.out.write(form2 % { "usererr" : uerr, "passerr" : perr, "mailerr" : eerr, "matchoo" : matcho, "up": u, "ep" : p})
+		self.render("form.html",usererr = uerr, passerr = perr, mailerr = eerr, matchoo = matcho, up = u, ep = p)
 	def isitvalid(self):
 		self.userstuff = cgi.escape(self.request.get('username'), quote = True)
 		usah = self.userstuff
-		print usah
+		#print usah
 		self.passstuff = cgi.escape(self.request.get('password'),quote = True)
 		self.verstuff = cgi.escape(self.request.get('verify'),quote = True)
 		self.emstuff = cgi.escape(self.request.get('email'),quote = True)
@@ -120,7 +144,7 @@ class MainPage(webapp2.RequestHandler):
 		if self.user and self.passs and self.match and self.email:
 			self.redirect('/valid?name=' + self.userstuff)
 		else:
-			self.write_form(self.uerr,self.perr,self.eerr,self.matcho)
+			self.write_form(self.uerr,self.perr,self.eerr,self.matcho, self.userstuff,self.emstuff)
 # [END main_page]
 
 class validhandler(webapp2.RequestHandler):
